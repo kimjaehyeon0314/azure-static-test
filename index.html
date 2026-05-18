@@ -51,6 +51,8 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             flex: 1;
             min-width: 280px;
+            display: flex;
+            flex-direction: column;
         }
 
         h2 {
@@ -88,6 +90,27 @@
 
         button:hover {
             opacity: 0.9;
+        }
+
+        /* ASMR 플레이어 스타일 */
+        .asmr-container {
+            margin-top: 1.5rem;
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 비율 유지 */
+            height: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .asmr-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
 
         /* 투두리스트 스타일 */
@@ -133,7 +156,6 @@
     </header>
 
     <div class="container">
-        <!-- 포모도로 타이머 섹션 (1시간으로 변경) -->
         <div class="card">
             <h2>⏱️ 집중 타이머 (1시간)</h2>
             <div class="timer-display" id="timer">60:00</div>
@@ -142,9 +164,15 @@
                 <button onclick="pauseTimer()">정지</button>
                 <button onclick="resetTimer()" style="background-color: #777;">리셋</button>
             </div>
+
+            <h2 style="margin-top: 2rem;">🎧 집중을 돕는 ASMR</h2>
+            <div class="asmr-container">
+                <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" 
+                    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1141708810&color=%235b8c5a&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false">
+                </iframe>
+            </div>
         </div>
 
-        <!-- 투두리스트 섹션 -->
         <div class="card">
             <h2>📝 오늘의 할 일</h2>
             <div class="todo-input-group">
@@ -152,8 +180,7 @@
                 <button onclick="addTodo()">추가</button>
             </div>
             <ul id="todo-list">
-                <!-- 리스트 아이템이 동적으로 추가됩니다 -->
-            </ul>
+                </ul>
         </div>
     </div>
 
@@ -171,7 +198,7 @@
 
         // 2. 포모도로 타이머 기능 (60분 설정)
         let timerInterval;
-        let timeLeft = 60 * 60; // 60분을 초로 계산 (3600초)
+        let timeLeft = 60 * 60; 
 
         function updateTimerDisplay() {
             const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
