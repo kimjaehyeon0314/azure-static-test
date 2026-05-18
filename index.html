@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Minimal Desk</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --accent-color: #5b8c5a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        #clock {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            gap: 2rem;
+            max-width: 800px;
+            width: 90%;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 280px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 0.5rem;
+            color: #555;
+        }
+
+        /* 타이머 스타일 */
+        .timer-display {
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* 투두리스트 스타일 */
+        .todo-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .todo-input-group input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .delete-btn {
+            background-color: #ff6b6b;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div id="clock">00:00:00</div>
+        <p style="margin: 0.5rem 0 0 0; color: #777;">오늘도 집중하는 하루를 보내세요.</p>
+    </header>
+
+    <div class="container">
+        <!-- 포모도로 타이머 섹션 (1시간으로 변경) -->
+        <div class="card">
+            <h2>⏱️ 집중 타이머 (1시간)</h2>
+            <div class="timer-display" id="timer">60:00</div>
+            <div class="btn-group">
+                <button onclick="startTimer()">시작</button>
+                <button onclick="pauseTimer()">정지</button>
+                <button onclick="resetTimer()" style="background-color: #777;">리셋</button>
+            </div>
+        </div>
+
+        <!-- 투두리스트 섹션 -->
+        <div class="card">
+            <h2>📝 오늘의 할 일</h2>
+            <div class="todo-input-group">
+                <input type="text" id="todo-input" placeholder="할 일을 입력하세요..." onkeypress="handleKeyPress(event)">
+                <button onclick="addTodo()">추가</button>
+            </div>
+            <ul id="todo-list">
+                <!-- 리스트 아이템이 동적으로 추가됩니다 -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 1. 실시간 시계 기능
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // 2. 포모도로 타이머 기능 (60분 설정)
+        let timerInterval;
+        let timeLeft = 60 * 60; // 60분을 초로 계산 (3600초)
+
+        function updateTimerDisplay() {
+            const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+            const seconds = String(timeLeft % 60).padStart(2, '0');
+            document.getElementById('timer').innerText = `${minutes}:${seconds}`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    alert("1시간 집중 시간이 끝났습니다! 수고하셨습니다.");
+                    timeLeft = 60 * 60;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timeLeft = 60 * 60;
+            updateTimerDisplay();
+        }
+
+        // 3. 투두리스트 기능
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${text}</span>
+                <button class="delete-btn" onclick="this.parentElement.remove()">삭제</button>
+            `;
+
+            document.getElementById('todo-list').appendChild(li);
+            input.value = '';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addTodo();
+            }
+        }
+    </script>
+</body>
+</html>
